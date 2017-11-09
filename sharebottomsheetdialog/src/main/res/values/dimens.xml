@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <dimen name="dp_xxxxsmall">2dp</dimen>
+    <dimen name="dp_xxxsmall">4dp</dimen>
+    <dimen name="dp_xxsmall">6dp</dimen>
+    <dimen name="dp_xsmall">8dp</dimen>
+    <dimen name="dp_small">10dp</dimen>
+    <dimen name="dp_medium">12dp</dimen>
+    <dimen name="dp_mid">14dp</dimen>
+    <dimen name="dp_large">16dp</dimen>
+    <dimen name="dp_xlarge">18dp</dimen>
+
+    <dimen name="icon_size_standard">24dp</dimen>
+
+    <dimen name="sp_xsmall">12sp</dimen>
+
+</resources>
