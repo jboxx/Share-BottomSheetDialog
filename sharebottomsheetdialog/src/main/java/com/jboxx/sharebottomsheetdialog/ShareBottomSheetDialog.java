@@ -27,6 +27,9 @@ public class ShareBottomSheetDialog extends BottomSheetDialogFragment {
 
     private boolean isFullScreen = false;
 
+    /**
+     * Constructor of the share bottom sheet dialog, to create bottom sheet dialog and controller as well
+     */
     public ShareBottomSheetDialog(){
         shareBottomSheetController = new ShareBottomSheetController();
     }
@@ -56,34 +59,71 @@ public class ShareBottomSheetDialog extends BottomSheetDialogFragment {
         return view;
     }
 
+    /**
+     * @param isFullscreen flag that you want to make bottom sheet fullscreen or not
+     * the default is `false`
+     */
     public void isFullScreen(boolean isFullscreen) {
         this.isFullScreen = isFullscreen;
     }
 
+    /**
+     * @param title flag that you want to set title of bottom
+     * the default is `send to`
+     */
     public void setTitle(@NonNull String title) {
         shareBottomSheetController.setTitle(title);
     }
 
+
+    /**
+     * @param extraString fill message if you want to give messages into content
+     * don't set the message if you don't want to give string content
+     */
     public void setMessage(@NonNull String extraString) {
         shareBottomSheetController.setMessage(extraString);
     }
 
+    /**
+     * set listener if you want to give callback and set your content messages
+     * @param listener that can give u callback `Resolve Info` object so you can manipulate messages
+     *                 depends on user selection
+     */
     public void setMessage(ShareBottomSheetDialogInterface.OnCustomMessage listener) {
         shareBottomSheetController.setMessage(listener);
     }
 
+    /**
+     * set base url that u want to share
+     * @param url can contain domain, path, and parameter that u needed
+     */
     public void setUrl(@NonNull String url) {
         shareBottomSheetController.setUrl(url);
     }
 
+    /**
+     * set listener if you want to give callback and set your `utm_source`
+     * @param listener providing callback `Resolve Info` triggering by user selecting another apps
+     *                 so you can manipulate utm_source depends on apps that user selected
+     * if you want to constant `utm_source` just set string return type
+     */
     public void customUtmSource(ShareBottomSheetDialogInterface.OnCustomUtmSource listener) {
         shareBottomSheetController.setListenerCustomUtm(listener);
     }
 
+    /**
+     * enabling utm source will give you default `utm_source` into your parameter
+     * @param isEnableUtmSource if you set into `false`, `utm_source` will not provide into the url
+     */
     public void addUtmSource(boolean isEnableUtmSource) {
         shareBottomSheetController.setEnabledUtmSource(isEnableUtmSource);
     }
 
+    /**
+     * set another `utm` parameter that u need included into your url
+     * @param value set value that u want
+     * @param utm set utm that u need to add into paramater
+     */
     public void setUtm(@NonNull String value, @NonNull @UTMConstants.UTM String utm) {
         try {
             if(!TextUtils.isEmpty(value)) {
@@ -100,56 +140,108 @@ public class ShareBottomSheetDialog extends BottomSheetDialogFragment {
         private final ShareBottomSheetController.ShareDialogParam param;
         private final FragmentManager fragmentManager;
 
+        /**
+         * Creates a builder for an bottom sheet dialog that uses the default
+         * <p>
+         * @param fragmentManager the fragment manager of the activity
+         */
         public Builder(FragmentManager fragmentManager) {
             this(fragmentManager, TAG);
         }
 
+        /**
+         * Creates a builder for an bottom sheet dialog that uses the default
+         * <p>
+         * @param fragmentManager the fragment manager of the activity
+         * @param TAG flag TAG for Bottom Sheet Dialog
+         */
         public Builder(@NonNull FragmentManager fragmentManager, String TAG) {
             this.param = new ShareBottomSheetController.ShareDialogParam();
             this.fragmentManager = fragmentManager;
             this.TAG = TAG;
         }
 
+        /**
+         * @param isCancelable flag that you want to make bottom sheet cancelable or not
+         * the default is `true`, set cancelable into `false` will forcing user to choose apps
+         * that she/he need to pick
+         */
         public Builder setCancelable(boolean isCancelable) {
             this.param.isCancelable = isCancelable;
             return this;
         }
 
+        /**
+         * @param isFullscreen flag that you want to make bottom sheet fullscreen or not
+         * the default is `false`
+         */
         public Builder isFullScreen(boolean isFullscreen) {
             this.param.isFullScreen = isFullscreen;
             return this;
         }
 
+        /**
+         * @param title flag that you want to set title of bottom
+         * the default is `send to`
+         */
         public Builder setTitle(@NonNull String title) {
             this.param.title = title;
             return this;
         }
 
+        /**
+         * @param extraString fill message if you want to give messages into content
+         * don't set the message if you don't want to give string content
+         */
         public Builder setMessage(@NonNull String extraString) {
             this.param.extraString = extraString;
             return this;
         }
 
+        /**
+         * set listener if you want to give callback and set your content messages
+         * @param listener that can give u callback `Resolve Info` object so you can manipulate messages
+         *                 depends on user selection
+         */
         public Builder setMessage(final ShareBottomSheetDialogInterface.OnCustomMessage listener) {
             this.param.mCustomMessageListener = listener;
             return this;
         }
 
+        /**
+         * set base url that u want to share
+         * @param url can contain domain, path, and parameter that u needed
+         */
         public Builder setUrl(@NonNull String url) {
             this.param.url = url;
             return this;
         }
 
+        /**
+         * set listener if you want to give callback and set your `utm_source`
+         * @param listener providing callback `Resolve Info` triggering by user selecting another apps
+         *                 so you can manipulate utm_source depends on apps that user selected
+         * if you want to constant `utm_source` just set string return type
+         */
         public Builder customUtmSource(final ShareBottomSheetDialogInterface.OnCustomUtmSource listener) {
             this.param.mCustomUtmSourceListener = listener;
             return this;
         }
 
+        /**
+         * enabling utm source will give you default `utm_source` into your parameter
+         * @param isEnableUtmSource if you set into `false`, `utm_source` will not provide into the url
+         */
         public Builder addUtmSource(boolean isEnableUtmSource) {
             this.param.enabledUtmSource = isEnableUtmSource;
             return this;
         }
 
+        /**
+         * set another `utm` parameter that u need included into your url
+         * @param value set value that u want
+         * @param utm set utm that u need to add into paramater
+         */
         public Builder setUtm(@NonNull String value, @NonNull @UTMConstants.UTM String utm) {
             if(!TextUtils.isEmpty(value)) {
                 this.param.utms.put(utm, value);
@@ -157,6 +249,14 @@ public class ShareBottomSheetDialog extends BottomSheetDialogFragment {
             return this;
         }
 
+        /**
+         * Creates an {@link ShareBottomSheetDialog} with the arguments supplied to this
+         * builder.
+         * <p>
+         * Calling this method does not display the dialog. If no additional
+         * processing is needed, {@link #show()} may be called instead to both
+         * create and display the dialog.
+         */
         public ShareBottomSheetDialog create() {
             final ShareBottomSheetDialog shareBottomSheetDialog = new ShareBottomSheetDialog();
             this.param.apply(shareBottomSheetDialog.shareBottomSheetController);
@@ -167,6 +267,16 @@ public class ShareBottomSheetDialog extends BottomSheetDialogFragment {
             return shareBottomSheetDialog;
         }
 
+        /**
+         * Creates an {@link ShareBottomSheetDialog} with the arguments supplied to this
+         * builder and immediately displays the dialog.
+         * <p>
+         * Calling this method is functionally identical to:
+         * <pre>
+         *     ShareBottomSheetDialog dialog = builder.create();
+         *     dialog.show();
+         * </pre>
+         */
         public ShareBottomSheetDialog show() {
             final ShareBottomSheetDialog shareBottomSheetDialog = create();
             shareBottomSheetDialog.show(fragmentManager, TAG);
