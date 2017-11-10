@@ -108,6 +108,18 @@ class ShareBottomSheetController {
         customMessageCallback = listenerCustomMessage;
     }
 
+    protected void setUtm(String key, String value) throws UnsupportedEncodingException {
+        this.populateUtm.append("&" + key + "=" + URLEncoder.encode(value, "utf-8"));
+    }
+
+    protected void setEnabledUtmSource(boolean enabledUtmSource) {
+        this.enabledUtmSource = enabledUtmSource;
+    }
+
+    protected void setUrl(String url) {
+        this.url = url;
+    }
+
     private List<ResolveInfo> showAllShareApp() {
         java.util.List<ResolveInfo> mApps;
         Intent intent = new Intent(Intent.ACTION_SEND, null);
@@ -138,38 +150,25 @@ class ShareBottomSheetController {
     }
 
     private StringBuilder populateMessage(){
-        if(!extraString.isEmpty()) {
-            message.append(extraString + "\n\n");
+        if(!TextUtils.isEmpty(extraString)) {
+            message.append(extraString);
         }
-        if(!url.isEmpty()) {
+        if(!TextUtils.isEmpty(url)) {
+            if(!TextUtils.isEmpty(extraString)) {
+                message.append("\n\n");
+            }
             message.append(url);
-            if(getUtm() != null) {
+            if(!TextUtils.isEmpty(populateUtm)) {
                 if(!message.toString().contains("?")) {
                     message.append("?");
                 }
                 if(url.charAt(url.length()-1) == '&') {
                     message = new StringBuilder(message.substring(0, message.length()-1));
                 }
-                message.append(getUtm().substring(1, getUtm().length()));
+                message.append(populateUtm.substring(1, populateUtm.length()));
             }
         }
         return message;
-    }
-
-    protected void setUtm(String key, String value) throws UnsupportedEncodingException {
-        this.populateUtm.append("&" + key + "=" + URLEncoder.encode(value, "utf-8"));
-    }
-
-    private StringBuilder getUtm() {
-        return populateUtm;
-    }
-
-    protected void setEnabledUtmSource(boolean enabledUtmSource) {
-        this.enabledUtmSource = enabledUtmSource;
-    }
-
-    protected void setUrl(String url) {
-        this.url = url;
     }
 
     protected static class ShareDialogParam {
@@ -199,7 +198,7 @@ class ShareBottomSheetController {
                 dialog.setListenerCustomUtm(new DefaultUtmSourceCallback() {});
             }
 
-            if(!utms.isEmpty()) {
+            if(utms != null && !utms.isEmpty() && utms.size() > 0) {
                 for(Map.Entry<String, String> entry : utms.entrySet()) {
                     String key = entry.getKey();
                     String value = entry.getValue();
