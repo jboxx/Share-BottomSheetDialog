@@ -5,8 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:gravity="center"
-    tools:context="com.jboxx.bottomsheetdialog.JavaActivity">
+    android:gravity="center">
 
     <Button
         android:id="@+id/shareBtn1"

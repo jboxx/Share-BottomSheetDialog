@@ -20,20 +20,20 @@ class MainActivity : AppCompatActivity() {
         val shareButton2 = findViewById<Button>(R.id.shareBtn2) as Button
 
         shareButton1.setOnClickListener {
-            /*ShareBottomSheetDialog.Builder(supportFragmentManager)
+            ShareBottomSheetDialog.Builder(supportFragmentManager)
                     .setCancelable(true)
                     .setUrl("https://www.youtube.com/watch?v=QBGaO89cBMI&")
                     .addUtmSource(false)
                     .customUtmSource { return@customUtmSource "everywhere" }
-                    .show()*/
+                    .show()
         }
 
         shareButton2.setOnClickListener {
-            /*val shareBottomSheet = ShareBottomSheetDialog.Builder(supportFragmentManager)
+            val shareBottomSheet = ShareBottomSheetDialog.Builder(supportFragmentManager)
             shareBottomSheet.setUrl("https://code.tutsplus.com/articles/coding-functional-android-apps-in-kotlin-lambdas-null-safety-more--cms-27964")
             shareBottomSheet.setUtm("carousel", UTMConstants.UTM_CONTENT)
             shareBottomSheet.addUtmSource(true)
-            shareBottomSheet.show()*/
+            shareBottomSheet.show()
         }
 
     }
