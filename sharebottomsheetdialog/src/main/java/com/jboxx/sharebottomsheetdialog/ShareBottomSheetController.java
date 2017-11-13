@@ -52,7 +52,10 @@ class ShareBottomSheetController {
         final ApplicationsAdapter mAdapter = new ApplicationsAdapter(mContext, showAllShareApp(),
                 new ApplicationsAdapter.ApplicationsAdapterCallback() {
                     @Override public void onChooseApps(ResolveInfo resolveInfo) {
-                        if(enabledUtmSource && customUtmSourceCallback != null) {
+                        if(enabledUtmSource) {
+                            if(customUtmSourceCallback == null) {
+                                setListenerCustomUtm(new DefaultUtmSourceCallback() {});
+                            }
                             String utm_source = customUtmSourceCallback.onChooseApps(resolveInfo);
                             if(!TextUtils.isEmpty(utm_source)){
                                 try {
@@ -194,8 +197,6 @@ class ShareBottomSheetController {
 
             if(mCustomUtmSourceListener != null) {
                 dialog.setListenerCustomUtm(mCustomUtmSourceListener);
-            } else {
-                dialog.setListenerCustomUtm(new DefaultUtmSourceCallback() {});
             }
 
             if(utms != null && !utms.isEmpty() && utms.size() > 0) {
