@@ -17,7 +17,16 @@ jobs:
         name: Download Dependencies
         command: ./gradlew androidDependencies
 
+      # Download and cache dependencies
+      - restore_cache:
+        key: jars-{{ checksum "build.gradle" }}-{{ checksum "sharebottomsheetdialog/build.gradle" }}-{{ checksum "sample/build.gradle" }}
+
+      - save_cache:
+          path:
+            - ~/.gradle
+          key: jars-{{ checksum "build.gradle" }}-{{ checksum "sharebottomsheetdialog/build.gradle" }}-{{ checksum "sample/build.gradle" }}
+
       # run !
       - run:
-        name: clean build upload
+        name: Clean Build Upload
         command: ./gradlew clean build install bintrayUpload
