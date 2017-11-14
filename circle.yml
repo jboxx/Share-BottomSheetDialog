@@ -6,15 +6,9 @@ jobs:
     working_directory: ~/repo/sharebottomsheet
     steps:
       checkout
-      restore_cache:
-        key: jars-{{ checksum "build.gradle" }}-{{ checksum "sharebottomsheetdialog/build.gradle" }}-{{ checksum "sample/build.gradle" }}
       run:
         name: Download Dependencies
         command: ./gradlew androidDependencies
-      save_cache:
-        paths:
-          - ~/.gradle
-        key: jars-{{ checksum "build.gradle" }}-{{ checksum "sharebottomsheetdialog/build.gradle" }}-{{ checksum "sample/build.gradle" }}
   deploy-job:
     docker:
       - image: my-image
