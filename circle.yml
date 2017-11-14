@@ -13,25 +13,10 @@ jobs:
     steps:
       - checkout
 
-      # Download and cache dependencies
-      - restore_cache:
-        keys:
-          -jars-{{ checksum "build.gradle" }}
-          -jars-{{ checksum  "sharebottomsheetdialog/build.gradle" }}
-          -jars-{{ checksum  "sample/build.gradle" }}
-          -jars
       - run:
         name: Download Dependencies
         command: ./gradlew androidDependencies
 
-      - save_cache:
-          path:
-            - ~/.gradle
-          keys:
-            -jars-{{ checksum "build.gradle" }}
-            -jars-{{ checksum  "sharebottomsheetdialog/build.gradle" }}
-            -jars-{{ checksum  "sample/build.gradle" }}
-            -jars
       # run !
       - run:
         name: clean build upload
