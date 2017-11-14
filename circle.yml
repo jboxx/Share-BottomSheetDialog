@@ -11,11 +11,11 @@ jobs:
       JVM_OPTS: -Xmx3200m
 
     steps:
-      - checkout
-      - run:
+      checkout
+      run:
         name: Download Dependencies
         command: ./gradlew androidDependencies
       # run !
-      - run:
+      run:
         name: Clean Build Upload
         command: ./gradlew clean build install bintrayUpload
