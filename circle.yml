@@ -10,7 +10,7 @@ jobs:
           key: jars-{{ checksum "build.gradle" }}-{{ checksum "sharebottomsheetdialog/build.gradle" }}-{{ checksum "sample/build.gradle" }}
       - run:
           name: Download Dependencies Clean Build
-          command: ./gradlew androidDependencies clean build install
+          command: ./gradlew androidDependencies clean build
       - save_cache:
           paths:
             - ~/.gradle
@@ -21,8 +21,8 @@ jobs:
     working_directory: ~/repo/sharebottomsheet
     steps:
       - run:
-          name: Upload
-          command: ./gradlew bintrayUpload
+          name: Install Upload
+          command: ./gradlew install bintrayUpload
 
 workflows:
   version: 2
