@@ -15,21 +15,15 @@ jobs:
 
       # Download and cache dependencies
       - restore_cache:
-        keys:
-          - jars-{{ checksum "build.gradle" }}
-          - jars-{{ checksum  "sharebottomsheetdialog/build.gradle" }}
-          - jars-{{ checksum  "sample/build.gradle" }}
-          - jars-
+        key: jars-{{ checksum "build.gradle" }}-{{ checksum  "sharebottomsheetdialog/build.gradle" }}-{{ checksum  "sample/build.gradle" }}
       - run:
         name: Download Dependencies
         command: ./gradlew androidDependencies
 
       - save_cache:
-          paths:
+          path:
             - ~/.gradle
-          keys:
-            - jars-{{ checksum "build.gradle" }}-{{ checksum  "sharebottomsheetdialog/build.gradle" }}-{{ checksum  "sample/build.gradle" }}
-            - jars-
+          key: jars-{{ checksum "build.gradle" }}-{{ checksum "sharebottomsheetdialog/build.gradle" }}-{{ checksum "sample/build.gradle" }}
 
       # run !
       - run:
