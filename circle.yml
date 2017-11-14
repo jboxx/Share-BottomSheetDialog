@@ -8,7 +8,7 @@ jobs:
       - checkout
       - run:
           name: Download Dependencies
-          command: ./gradlew androidDependencies
+          command: ./gradlew androidDependencies clean build install
   deploy-job:
     docker:
       - image: my-image
@@ -16,7 +16,7 @@ jobs:
     steps:
       - run:
           name: Clean Build Upload
-          command: ./gradlew clean build install bintrayUpload
+          command: ./gradlew bintrayUpload
 
 workflows:
   version: 2
