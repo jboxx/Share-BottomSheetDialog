@@ -5,18 +5,18 @@ jobs:
       - image: circleci/android:api-26-alpha
     working_directory: ~/repo/sharebottomsheet
     steps:
-      checkout
-      run:
-        name: Download Dependencies
-        command: ./gradlew androidDependencies
+      - checkout
+      - run:
+          name: Download Dependencies
+          command: ./gradlew androidDependencies
   deploy-job:
     docker:
       - image: my-image
     working_directory: ~/repo/sharebottomsheet
     steps:
-      run:
-        name: Clean Build Upload
-        command: ./gradlew clean build install bintrayUpload
+      - run:
+          name: Clean Build Upload
+          command: ./gradlew clean build install bintrayUpload
 
 workflows:
   version: 2
