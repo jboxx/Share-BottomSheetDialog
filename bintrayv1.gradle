@@ -30,12 +30,12 @@ artifacts {
 }
 
 // Bintray
-Properties properties = new Properties()
-properties.load(project.rootProject.file('local.properties').newDataInputStream())
+//Properties properties = new Properties()
+//properties.load(project.rootProject.file('local.properties').newDataInputStream())
 
 bintray {
-    user = "$System.env.CIRCLE_BINTRAY_USER" ? "$System.env.CIRCLE_BINTRAY_USER" : properties.getProperty("bintray.user")
-    key = "$System.env.CIRCLE_BINTRAY_API_KEY" ? "$System.env.CIRCLE_BINTRAY_API_KEY" : properties.getProperty("bintray.apikey")
+    user = "$System.env.CIRCLE_BINTRAY_USER"
+    key = "$System.env.CIRCLE_BINTRAY_API_KEY"
 
     configurations = ['archives']
     pkg {

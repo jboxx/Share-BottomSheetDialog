@@ -43,6 +43,10 @@ ext {
     artifact = POM_ARTIFACT_ID
 }
 
-apply from: '../installv1.gradle'
-apply from: '../bintrayv1.gradle'
+
+if (System.getenv("CIRCLECI")) {
+    apply from: '../installv1.gradle'
+    apply from: '../bintrayv1.gradle'
+}
+
 
