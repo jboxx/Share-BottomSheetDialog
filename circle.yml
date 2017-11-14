@@ -17,7 +17,7 @@ jobs:
           key: jars-{{ checksum "build.gradle" }}-{{ checksum "sharebottomsheetdialog/build.gradle" }}-{{ checksum "sample/build.gradle" }}
   deploy-job:
     docker:
-      - image: my-image
+      - image: circleci/android:api-26-alpha
     working_directory: ~/repo/sharebottomsheet
     steps:
       - run:
