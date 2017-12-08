@@ -1,37 +1,26 @@
 version: 2
 jobs:
-  build-job:
+  build:
     docker:
       - image: circleci/android:api-26-alpha
+
     working_directory: ~/repo/sharebottomsheet
+    environment:
+      TERM: dumb
+      _JAVA_OPTIONS: "-Xmx1400m -XX:ParallelGCThreads=2 -XX:ConcGCThreads=2 -XX:ParallelGCThreads=2 -Djava.util.concurrent.ForkJoinPool.common.parallelism=2"
+
     steps:
       - checkout
       - restore_cache:
-          key: jars-{{ checksum "build.gradle" }}-{{ checksum "sharebottomsheetdialog/build.gradle" }}-{{ checksum "sample/build.gradle" }}
+          key: sdk-{{ .Branch }}
       - run:
-          name: Download Dependencies Clean Build
-          command: ./gradlew androidDependencies clean build
+          name: Run Tests
+          command: ./gradlew clean testDebug
       - save_cache:
+          key: sdk-{{ .Branch }}
           paths:
-            - ~/.gradle
-          key: jars-{{ checksum "build.gradle" }}-{{ checksum "sharebottomsheetdialog/build.gradle" }}-{{ checksum "sample/build.gradle" }}
-  deploy-job:
-    docker:
-      - image: circleci/android:api-26-alpha
-    working_directory: ~/repo/sharebottomsheet
-    steps:
-      - run:
-          name: Install Upload
-          command: ./gradlew install bintrayUpload
-
-workflows:
-  version: 2
-  build-deploy:
-    jobs:
-      - build-job
-      - deploy-job:
-          requires:
-            - build-job
-          filters:
-            branches:
-              only: master
+            - "/usr/local/android-sdk"
+      - deploy:
+          name: Deploy to Bintray
+          command: |
+            ./gradlew bintrayUpload
