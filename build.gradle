@@ -63,7 +63,7 @@ ext {
     libraryVersion = POM_VERSION
 
     developerId = 'jboxx'
-    developerName = 'ifqi Fardi Pradhana'
+    developerName = 'Rifqi Fardi Pradhana'
     developerEmail = 'rifqifardi@gmail.com'
 
     licenseName = 'MIT'
