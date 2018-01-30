@@ -32,12 +32,11 @@ class ShareBottomSheetController {
 
     private TextView mTitleView;
 
-    private StringBuilder populateUtm = new StringBuilder();
+    private StringBuilder populateParam = new StringBuilder();
     private StringBuilder message = new StringBuilder();
     private String extraString;
     private String url;
-    private boolean enabledUtmSource = false;
-    private ShareBottomSheetDialogInterface.OnCustomUtmSource customUtmSourceCallback;
+    private LinkedHashMap<String, ShareBottomSheetDialogInterface.OnCustomUtmSource> listOfListener = new LinkedHashMap<>();
     private ShareBottomSheetDialogInterface.OnCustomMessage customMessageCallback;
 
     protected ShareBottomSheetController() {}
@@ -52,20 +51,23 @@ class ShareBottomSheetController {
         final ApplicationsAdapter mAdapter = new ApplicationsAdapter(mContext, showAllShareApp(),
                 new ApplicationsAdapter.ApplicationsAdapterCallback() {
                     @Override public void onChooseApps(ResolveInfo resolveInfo) {
-                        if(enabledUtmSource) {
-                            if(customUtmSourceCallback == null) {
-                                setListenerCustomUtm(new DefaultUtmSourceCallback() {});
-                            }
-                            String utm_source = customUtmSourceCallback.onChooseApps(resolveInfo);
-                            if(!TextUtils.isEmpty(utm_source)){
+                        if (listOfListener != null && !listOfListener.isEmpty() && listOfListener.size() > 0) {
+                            for(Map.Entry<String, ShareBottomSheetDialogInterface.OnCustomUtmSource> entry : listOfListener.entrySet()) {
+                                String key = entry.getKey();
+                                ShareBottomSheetDialogInterface.OnCustomUtmSource listener = entry.getValue();
                                 try {
-                                    setUtm(UTMConstants.UTM_SOURCE, utm_source);
+                                    String value = listener.onChooseApps(resolveInfo);
+                                    if(!TextUtils.isEmpty(value)) {
+                                        setParameter(key, value);
+                                    }
                                 } catch (UnsupportedEncodingException e) {
+                                    e.printStackTrace();
+                                } catch (Exception e) {
                                     e.printStackTrace();
                                 }
                             }
                         }
-                        if(customMessageCallback != null) {
+                        if (customMessageCallback != null) {
                             if(!TextUtils.isEmpty(customMessageCallback.onChooseApps(resolveInfo))){
                                 setMessage(customMessageCallback.onChooseApps(resolveInfo));
                             }
@@ -94,33 +96,43 @@ class ShareBottomSheetController {
     }
 
     protected void setTitle(CharSequence title) {
-        if (mTitleView != null) {
-            mTitleView.setText(title);
+        if (mTitleView != null && !TextUtils.isEmpty(title)) {
+            this.mTitleView.setText(title);
         }
     }
 
-    protected void setListenerCustomUtm(ShareBottomSheetDialogInterface.OnCustomUtmSource listenerCustomUtm) {
-        customUtmSourceCallback = listenerCustomUtm;
+    protected void setListenerParam(String param, ShareBottomSheetDialogInterface.OnCustomUtmSource listener) {
+        if (!TextUtils.isEmpty(param)) {
+            this.listOfListener.put(param, listener);
+        }
+    }
+
+    private void setListOfListener(LinkedHashMap<String, ShareBottomSheetDialogInterface.OnCustomUtmSource> listOfListener) {
+        this.listOfListener = listOfListener;
     }
 
     protected void setMessage(String extraString) {
-        this.extraString = extraString;
+        if (!TextUtils.isEmpty(extraString)) {
+            this.extraString = extraString;
+        }
     }
 
     protected void setMessage(ShareBottomSheetDialogInterface.OnCustomMessage listenerCustomMessage) {
-        customMessageCallback = listenerCustomMessage;
+        if (listenerCustomMessage != null) {
+            this.customMessageCallback = listenerCustomMessage;
+        }
     }
 
-    protected void setUtm(String key, String value) throws UnsupportedEncodingException {
-        this.populateUtm.append("&" + key + "=" + URLEncoder.encode(value, "utf-8"));
-    }
-
-    protected void setEnabledUtmSource(boolean enabledUtmSource) {
-        this.enabledUtmSource = enabledUtmSource;
+    protected void setParameter(String key, String value) throws UnsupportedEncodingException {
+        if (!TextUtils.isEmpty(value) && !TextUtils.isEmpty(value)) {
+            this.populateParam.append("&" + key + "=" + URLEncoder.encode(value, "utf-8"));
+        }
     }
 
     protected void setUrl(String url) {
-        this.url = url;
+        if (!TextUtils.isEmpty(url)) {
+            this.url = url;
+        }
     }
 
     private List<ResolveInfo> showAllShareApp() {
@@ -160,15 +172,19 @@ class ShareBottomSheetController {
             if(!TextUtils.isEmpty(extraString)) {
                 message.append("\n\n");
             }
-            message.append(url);
-            if(!TextUtils.isEmpty(populateUtm)) {
+            if(url.charAt(url.length()-1) == '&') {
+                message.append(url.substring(0, url.length()-1));
+            } else {
+                message.append(url);
+            }
+
+            if(!TextUtils.isEmpty(populateParam)) {
                 if(!message.toString().contains("?")) {
                     message.append("?");
+                    message.append(populateParam.substring(1, populateParam.length()));
+                } else {
+                    message.append(populateParam.substring(0, populateParam.length()));
                 }
-                if(url.charAt(url.length()-1) == '&') {
-                    message = new StringBuilder(message.substring(0, message.length()-1));
-                }
-                message.append(populateUtm.substring(1, populateUtm.length()));
             }
         }
         return message;
@@ -180,47 +196,47 @@ class ShareBottomSheetController {
         protected boolean isCancelable = true;
 
         protected String title;
-        protected ShareBottomSheetDialogInterface.OnCustomUtmSource mCustomUtmSourceListener;
         protected ShareBottomSheetDialogInterface.OnCustomMessage mCustomMessageListener;
-        protected boolean enabledUtmSource = false;
+        protected LinkedHashMap<String, ShareBottomSheetDialogInterface.OnCustomUtmSource> listOfListener = new LinkedHashMap<>();
+
         protected String extraString;
         protected String url;
-        protected HashMap<String, String> utms = new LinkedHashMap<>();
+        protected HashMap<String, String> anotherParam = new LinkedHashMap<>();
 
         protected ShareDialogParam() {}
 
         protected void apply(ShareBottomSheetController dialog) {
-            if(title != null) {
+            if(!TextUtils.isEmpty(title)) {
                 dialog.setTitle(title);
             }
-            dialog.setEnabledUtmSource(enabledUtmSource);
 
-            if(mCustomUtmSourceListener != null) {
-                dialog.setListenerCustomUtm(mCustomUtmSourceListener);
+            if(!TextUtils.isEmpty(extraString)) {
+                dialog.setMessage(extraString);
             }
 
-            if(utms != null && !utms.isEmpty() && utms.size() > 0) {
-                for(Map.Entry<String, String> entry : utms.entrySet()) {
+            if(mCustomMessageListener != null) {
+                dialog.setMessage(mCustomMessageListener);
+            }
+
+            if(!TextUtils.isEmpty(url)) {
+                dialog.setUrl(url);
+            }
+
+            if(anotherParam != null && !anotherParam.isEmpty() && anotherParam.size() > 0) {
+                for(Map.Entry<String, String> entry : anotherParam.entrySet()) {
                     String key = entry.getKey();
                     String value = entry.getValue();
                     try {
-                        dialog.setUtm(key, value);
+                        dialog.setParameter(key, value);
                     } catch (UnsupportedEncodingException e) {
                         e.printStackTrace();
                     }
                 }
             }
 
-            if(extraString != null) {
-                dialog.setMessage(extraString);
-            }
-            if(mCustomMessageListener != null) {
-                dialog.setMessage(mCustomMessageListener);
-            }
-            if(url != null) {
-                dialog.setUrl(url);
+            if(listOfListener != null && !listOfListener.isEmpty() && listOfListener.size() > 0) {
+                dialog.setListOfListener(listOfListener);
             }
         }
     }
-
 }

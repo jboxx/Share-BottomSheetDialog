@@ -89,7 +89,7 @@ public class ShareBottomSheetDialog extends BottomSheetDialogFragment {
      * @param listener that can give u callback `Resolve Info` object so you can manipulate messages
      *                 depends on user selection
      */
-    public void setMessage(ShareBottomSheetDialogInterface.OnCustomMessage listener) {
+    public void setMessage(@NonNull ShareBottomSheetDialogInterface.OnCustomMessage listener) {
         shareBottomSheetController.setMessage(listener);
     }
 
@@ -107,30 +107,22 @@ public class ShareBottomSheetDialog extends BottomSheetDialogFragment {
      *                 so you can manipulate utm_source depends on apps that user selected
      * if you want to constant `utm_source` just set string return type
      */
-    public void customUtmSource(ShareBottomSheetDialogInterface.OnCustomUtmSource listener) {
-        shareBottomSheetController.setListenerCustomUtm(listener);
-    }
-
-    /**
-     * enabling utm source will give you default `utm_source` into your parameter
-     * @param isEnableUtmSource if you set into `false`, `utm_source` will not provide into the url
-     */
-    public void addUtmSource(boolean isEnableUtmSource) {
-        shareBottomSheetController.setEnabledUtmSource(isEnableUtmSource);
+    public void addParameterWithCallback(@NonNull String param, @NonNull ShareBottomSheetDialogInterface.OnCustomUtmSource listener) {
+        shareBottomSheetController.setListenerParam(param, listener);
     }
 
     /**
      * set another `utm` parameter that u need included into your url
      * @param value set value that u want
-     * @param utm set utm that u need to add into paramater
+     * @param param set param that u need to add into paramater
      */
-    public void setUtm(@NonNull String value, @NonNull @UTMConstants.UTM String utm) {
-        try {
-            if(!TextUtils.isEmpty(value)) {
-                shareBottomSheetController.setUtm(utm, value);
+    public void addParameter(@NonNull String param, @NonNull String value) {
+        if (!TextUtils.isEmpty(param) && !TextUtils.isEmpty(value)) {
+            try {
+                shareBottomSheetController.setParameter(param, value);
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
             }
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
         }
     }
 
@@ -203,7 +195,7 @@ public class ShareBottomSheetDialog extends BottomSheetDialogFragment {
          * @param listener that can give u callback `Resolve Info` object so you can manipulate messages
          *                 depends on user selection
          */
-        public Builder setMessage(final ShareBottomSheetDialogInterface.OnCustomMessage listener) {
+        public Builder setMessage(@NonNull ShareBottomSheetDialogInterface.OnCustomMessage listener) {
             this.param.mCustomMessageListener = listener;
             return this;
         }
@@ -223,28 +215,21 @@ public class ShareBottomSheetDialog extends BottomSheetDialogFragment {
          *                 so you can manipulate utm_source depends on apps that user selected
          * if you want to constant `utm_source` just set string return type
          */
-        public Builder customUtmSource(final ShareBottomSheetDialogInterface.OnCustomUtmSource listener) {
-            this.param.mCustomUtmSourceListener = listener;
-            return this;
-        }
-
-        /**
-         * enabling utm source will give you default `utm_source` into your parameter
-         * @param isEnableUtmSource if you set into `false`, `utm_source` will not provide into the url
-         */
-        public Builder addUtmSource(boolean isEnableUtmSource) {
-            this.param.enabledUtmSource = isEnableUtmSource;
+        public Builder addParameterWithCallback(@NonNull String param, @NonNull final ShareBottomSheetDialogInterface.OnCustomUtmSource listener) {
+            if (!TextUtils.isEmpty(param)) {
+                this.param.listOfListener.put(param, listener);
+            }
             return this;
         }
 
         /**
          * set another `utm` parameter that u need included into your url
          * @param value set value that u want
-         * @param utm set utm that u need to add into paramater
+         * @param param set param that u need to add into parameter
          */
-        public Builder setUtm(@NonNull String value, @NonNull @UTMConstants.UTM String utm) {
-            if(!TextUtils.isEmpty(value)) {
-                this.param.utms.put(utm, value);
+        public Builder addParameter(@NonNull String param, @NonNull String value) {
+            if (!TextUtils.isEmpty(value) && !TextUtils.isEmpty(param)) {
+                this.param.anotherParam.put(param, value);
             }
             return this;
         }
