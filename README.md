@@ -7,7 +7,7 @@ The Gradle dependency is available via [jCenter][1]. jCenter is the default Mave
 
 The minimum API level supported by this library is API 15.
 
-    compile 'com.jboxx.sharebottomsheetdialog:sharebottomsheetdialog:0.3.0'
+    compile 'com.jboxx.sharebottomsheetdialog:sharebottomsheetdialog:0.5.0'
         
 
 [1]: https://bintray.com/jboxx/Share-BottomSheetDialog/sharebottomsheetdialog/view
