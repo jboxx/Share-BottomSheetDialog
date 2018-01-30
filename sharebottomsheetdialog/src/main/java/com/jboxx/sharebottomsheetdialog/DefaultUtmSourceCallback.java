@@ -6,6 +6,7 @@ import android.content.pm.ResolveInfo;
  * Created by Rifqi @jboxxpradhana
  */
 
+@Deprecated
 public abstract class DefaultUtmSourceCallback implements ShareBottomSheetDialogInterface.OnCustomUtmSource {
 
     public String onChooseApps(ResolveInfo resolveInfo) {
