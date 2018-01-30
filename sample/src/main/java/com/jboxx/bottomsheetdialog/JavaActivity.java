@@ -33,12 +33,16 @@ public class JavaActivity extends AppCompatActivity {
                 new ShareBottomSheetDialog.Builder(getSupportFragmentManager())
                         .setCancelable(true)
                         .isFullScreen(true)
-                        .setMessage("Share this link!")
+                        .setMessage(new ShareBottomSheetDialogInterface.OnCustomMessage() {
+                            @Override
+                            public String onChooseApps(ResolveInfo resolveInfo) {
+                                return "Share this link!";
+                            }
+                        })
                         .setUrl("https://www.youtube.com/watch?v=2ThFJODUZ_4")
-                        .setUtm("A.O.V", UTMConstants.UTM_TERM)
-                        .setUtm("video-miwon", UTMConstants.UTM_CAMPAIGN)
-                        .addUtmSource(true)
-                        .customUtmSource(new ShareBottomSheetDialogInterface.OnCustomUtmSource() {
+                        .addParameter(UTMConstants.UTM_TERM, "A.O.V")
+                        .addParameter(UTMConstants.UTM_CAMPAIGN, "video-miwon")
+                        .addParameterWithCallback(UTMConstants.UTM_SOURCE, new ShareBottomSheetDialogInterface.OnCustomUtmSource() {
                             @Override
                             public String onChooseApps(ResolveInfo resolveInfo) {
                                 String utmSource = "";
@@ -66,6 +70,12 @@ public class JavaActivity extends AppCompatActivity {
                                     utmSource = "from bbm";
                                 }
                                 return utmSource;
+                            }
+                        })
+                        .addParameterWithCallback(UTMConstants.UTM_CONTENT, new ShareBottomSheetDialogInterface.OnCustomUtmSource() {
+                            @Override
+                            public String onChooseApps(ResolveInfo resolveInfo) {
+                                return "video";
                             }
                         })
                         .show();

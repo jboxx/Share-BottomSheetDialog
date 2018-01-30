@@ -4,6 +4,7 @@ import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Button
 import com.jboxx.sharebottomsheetdialog.ShareBottomSheetDialog
+import com.jboxx.sharebottomsheetdialog.ShareBottomSheetDialogInterface
 import com.jboxx.sharebottomsheetdialog.UTMConstants
 
 /**
@@ -23,16 +24,14 @@ class MainActivity : AppCompatActivity() {
             ShareBottomSheetDialog.Builder(supportFragmentManager)
                     .setCancelable(true)
                     .setUrl("https://www.youtube.com/watch?v=QBGaO89cBMI&")
-                    .addUtmSource(false)
-                    .customUtmSource { return@customUtmSource "everywhere" }
+                    .addParameterWithCallback(UTMConstants.UTM_SOURCE, ShareBottomSheetDialogInterface.OnCustomUtmSource { resolveInfo -> "everywhere" })
                     .show()
         }
 
         shareButton2.setOnClickListener {
             val shareBottomSheet = ShareBottomSheetDialog.Builder(supportFragmentManager)
             shareBottomSheet.setUrl("https://code.tutsplus.com/articles/coding-functional-android-apps-in-kotlin-lambdas-null-safety-more--cms-27964")
-            shareBottomSheet.setUtm("carousel", UTMConstants.UTM_CONTENT)
-            shareBottomSheet.addUtmSource(true)
+            shareBottomSheet.addParameter(UTMConstants.UTM_CONTENT,"carousel")
             shareBottomSheet.show()
         }
 
