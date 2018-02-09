@@ -36,8 +36,9 @@ class ShareBottomSheetController {
     private StringBuilder message = new StringBuilder();
     private String extraString;
     private String url;
-    private LinkedHashMap<String, ShareBottomSheetDialogInterface.OnCustomUtmSource> listOfListener = new LinkedHashMap<>();
+    private LinkedHashMap<String, ShareBottomSheetDialogInterface.OnCustomParameter> listOfListener = new LinkedHashMap<>();
     private ShareBottomSheetDialogInterface.OnCustomMessage customMessageCallback;
+    private CustomOnDismissListener dismissListener;
 
     protected ShareBottomSheetController() {}
 
@@ -52,9 +53,9 @@ class ShareBottomSheetController {
                 new ApplicationsAdapter.ApplicationsAdapterCallback() {
                     @Override public void onChooseApps(ResolveInfo resolveInfo) {
                         if (listOfListener != null && !listOfListener.isEmpty() && listOfListener.size() > 0) {
-                            for(Map.Entry<String, ShareBottomSheetDialogInterface.OnCustomUtmSource> entry : listOfListener.entrySet()) {
+                            for(Map.Entry<String, ShareBottomSheetDialogInterface.OnCustomParameter> entry : listOfListener.entrySet()) {
                                 String key = entry.getKey();
-                                ShareBottomSheetDialogInterface.OnCustomUtmSource listener = entry.getValue();
+                                ShareBottomSheetDialogInterface.OnCustomParameter listener = entry.getValue();
                                 try {
                                     String value = listener.onChooseApps(resolveInfo);
                                     if(!TextUtils.isEmpty(value)) {
@@ -95,41 +96,39 @@ class ShareBottomSheetController {
         });
     }
 
-    protected void setTitle(CharSequence title) {
+    private void setTitle(CharSequence title) {
         if (mTitleView != null && !TextUtils.isEmpty(title)) {
             this.mTitleView.setText(title);
         }
     }
 
-    protected void setListenerParam(String param, ShareBottomSheetDialogInterface.OnCustomUtmSource listener) {
-        if (!TextUtils.isEmpty(param)) {
-            this.listOfListener.put(param, listener);
-        }
+    private void setDismissListener(CustomOnDismissListener dismissListener) {
+        this.dismissListener = dismissListener;
     }
 
-    private void setListOfListener(LinkedHashMap<String, ShareBottomSheetDialogInterface.OnCustomUtmSource> listOfListener) {
+    private void setListOfListener(LinkedHashMap<String, ShareBottomSheetDialogInterface.OnCustomParameter> listOfListener) {
         this.listOfListener = listOfListener;
     }
 
-    protected void setMessage(String extraString) {
+    private void setMessage(String extraString) {
         if (!TextUtils.isEmpty(extraString)) {
             this.extraString = extraString;
         }
     }
 
-    protected void setMessage(ShareBottomSheetDialogInterface.OnCustomMessage listenerCustomMessage) {
+    private void setMessage(ShareBottomSheetDialogInterface.OnCustomMessage listenerCustomMessage) {
         if (listenerCustomMessage != null) {
             this.customMessageCallback = listenerCustomMessage;
         }
     }
 
-    protected void setParameter(String key, String value) throws UnsupportedEncodingException {
+    private void setParameter(String key, String value) throws UnsupportedEncodingException {
         if (!TextUtils.isEmpty(value) && !TextUtils.isEmpty(value)) {
             this.populateParam.append("&" + key + "=" + URLEncoder.encode(value, "utf-8"));
         }
     }
 
-    protected void setUrl(String url) {
+    private void setUrl(String url) {
         if (!TextUtils.isEmpty(url)) {
             this.url = url;
         }
@@ -187,21 +186,26 @@ class ShareBottomSheetController {
                 }
             }
         }
+        if (dismissListener != null) {
+            dismissListener.content = message.toString();
+        }
         return message;
     }
 
     protected static class ShareDialogParam {
 
-        protected boolean isFullScreen = false;
-        protected boolean isCancelable = true;
+        private boolean isFullScreen = false;
+        private boolean isCancelable = true;
 
-        protected String title;
-        protected ShareBottomSheetDialogInterface.OnCustomMessage mCustomMessageListener;
-        protected LinkedHashMap<String, ShareBottomSheetDialogInterface.OnCustomUtmSource> listOfListener = new LinkedHashMap<>();
+        private CustomOnDismissListener dismissListener;
 
-        protected String extraString;
-        protected String url;
-        protected HashMap<String, String> anotherParam = new LinkedHashMap<>();
+        private String title;
+        private ShareBottomSheetDialogInterface.OnCustomMessage mCustomMessageListener;
+        private LinkedHashMap<String, ShareBottomSheetDialogInterface.OnCustomParameter> listOfListener = new LinkedHashMap<>();
+
+        private String extraString;
+        private String url;
+        private HashMap<String, String> anotherParam = new LinkedHashMap<>();
 
         protected ShareDialogParam() {}
 
@@ -237,6 +241,62 @@ class ShareBottomSheetController {
             if(listOfListener != null && !listOfListener.isEmpty() && listOfListener.size() > 0) {
                 dialog.setListOfListener(listOfListener);
             }
+
+            if(dismissListener != null) {
+                dialog.setDismissListener(dismissListener);
+            }
+        }
+
+        protected boolean isFullScreen() {
+            return isFullScreen;
+        }
+
+        protected void setFullScreen(boolean fullScreen) {
+            isFullScreen = fullScreen;
+        }
+
+        protected boolean isCancelable() {
+            return isCancelable;
+        }
+
+        protected void setCancelable(boolean cancelable) {
+            isCancelable = cancelable;
+        }
+
+        protected CustomOnDismissListener getDismissListener() {
+            return dismissListener;
+        }
+
+        protected void setDismissListener(CustomOnDismissListener dismissListener) {
+            this.dismissListener = dismissListener;
+        }
+
+        protected String getTitle() {
+            return title;
+        }
+
+        protected void setTitle(String title) {
+            this.title = title;
+        }
+
+        protected void setmCustomMessageListener(ShareBottomSheetDialogInterface.OnCustomMessage mCustomMessageListener) {
+            this.mCustomMessageListener = mCustomMessageListener;
+        }
+
+        protected void setListOfListener(String param, ShareBottomSheetDialogInterface.OnCustomParameter listener) {
+            this.listOfListener.put(param, listener);
+        }
+
+        protected void setExtraString(String extraString) {
+            this.extraString = extraString;
+        }
+
+        protected void setUrl(String url) {
+            this.url = url;
+        }
+
+        protected void setAnotherParam(String param, String value) {
+            this.anotherParam.put(param, value);
         }
     }
 }

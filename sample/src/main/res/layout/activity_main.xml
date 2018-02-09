@@ -5,7 +5,9 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:gravity="center">
+    android:gravity="center"
+    android:paddingLeft="@dimen/dp_xxxxlarge"
+    android:paddingRight="@dimen/dp_xxxxlarge">
 
     <Button
         android:id="@+id/shareBtn1"
@@ -16,6 +18,23 @@
     <Button
         android:id="@+id/shareBtn2"
         android:text="Share 2"
+        android:layout_marginTop="@dimen/dp_large"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <EditText
+        android:id="@+id/edtCopy"
+        android:hint="Copy clipboard will be here"
+        android:lines="5"
+        android:inputType="none"
+        android:layout_marginTop="@dimen/dp_large"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <Button
+        android:id="@+id/BtnSwitchActivity"
+        tools:text="Kotlin Activity"
+        android:layout_marginTop="@dimen/dp_32"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 

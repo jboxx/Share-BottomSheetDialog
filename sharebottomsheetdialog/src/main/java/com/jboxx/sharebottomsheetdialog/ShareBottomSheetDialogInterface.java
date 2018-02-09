@@ -8,13 +8,12 @@ import android.content.pm.ResolveInfo;
 
 public interface ShareBottomSheetDialogInterface {
 
-    public interface OnCustomUtmSource {
+     interface OnCustomParameter {
         String onChooseApps(ResolveInfo resolveInfo);
     }
 
-    public interface OnCustomMessage {
+     interface OnCustomMessage {
         String onChooseApps(ResolveInfo resolveInfo);
     }
-
 
 }

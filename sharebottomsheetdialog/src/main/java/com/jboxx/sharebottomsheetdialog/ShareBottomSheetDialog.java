@@ -15,8 +15,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
-import java.io.UnsupportedEncodingException;
-
 /**
  * Created by Rifqi @jboxxpradhana
  */
@@ -26,6 +24,8 @@ public class ShareBottomSheetDialog extends BottomSheetDialogFragment {
     private ShareBottomSheetController shareBottomSheetController;
 
     private boolean isFullScreen = false;
+    private boolean isCancelable = true;
+    private DialogInterface.OnDismissListener dismissListener;
 
     /**
      * Constructor of the share bottom sheet dialog, to create bottom sheet dialog and controller as well
@@ -40,10 +40,14 @@ public class ShareBottomSheetDialog extends BottomSheetDialogFragment {
             @Override
             public void onShow(DialogInterface dialog) {
                 BottomSheetDialog bottomSheetDialog = (BottomSheetDialog) dialog;
+                if(dismissListener != null) {
+                    bottomSheetDialog.setOnDismissListener(dismissListener);
+                }
+                bottomSheetDialog.setCancelable(isCancelable);
                 FrameLayout bottomSheetLayout = (FrameLayout) bottomSheetDialog.findViewById(R.id.design_bottom_sheet);
                 if(bottomSheetLayout != null){
                     final BottomSheetBehavior bottomSheetBehavior = BottomSheetBehavior.from(bottomSheetLayout);
-                    if(isFullScreen || getArguments().getBoolean("fullscreen", false)) {
+                    if(isFullScreen) {
                         bottomSheetBehavior.setPeekHeight(bottomSheetLayout.getHeight());
                     }
                 }
@@ -60,6 +64,15 @@ public class ShareBottomSheetDialog extends BottomSheetDialogFragment {
     }
 
     /**
+     * @param isCancelable flag that you want to make bottom sheet cancelable or not
+     * the default is `true`, set cancelable into `false` will forcing user to choose apps
+     * that she/he need to pick
+     */
+    public void setCancelable(boolean isCancelable) {
+        this.isCancelable = isCancelable;
+    }
+
+    /**
      * @param isFullscreen flag that you want to make bottom sheet fullscreen or not
      * the default is `false`
      */
@@ -68,62 +81,10 @@ public class ShareBottomSheetDialog extends BottomSheetDialogFragment {
     }
 
     /**
-     * @param title flag that you want to set title of bottom
-     * the default is `send to`
+     * @param dismissListener listener if you want to give callback while user dismissing bottomsheet
      */
-    public void setTitle(@NonNull String title) {
-        shareBottomSheetController.setTitle(title);
-    }
-
-
-    /**
-     * @param extraString fill message if you want to give messages into content
-     * don't set the message if you don't want to give string content
-     */
-    public void setMessage(@NonNull String extraString) {
-        shareBottomSheetController.setMessage(extraString);
-    }
-
-    /**
-     * set listener if you want to give callback and set your content messages
-     * @param listener that can give u callback `Resolve Info` object so you can manipulate messages
-     *                 depends on user selection
-     */
-    public void setMessage(@NonNull ShareBottomSheetDialogInterface.OnCustomMessage listener) {
-        shareBottomSheetController.setMessage(listener);
-    }
-
-    /**
-     * set base url that u want to share
-     * @param url can contain domain, path, and parameter that u needed
-     */
-    public void setUrl(@NonNull String url) {
-        shareBottomSheetController.setUrl(url);
-    }
-
-    /**
-     * set listener if you want to give callback and set your `utm_source`
-     * @param listener providing callback `Resolve Info` triggering by user selecting another apps
-     *                 so you can manipulate utm_source depends on apps that user selected
-     * if you want to constant `utm_source` just set string return type
-     */
-    public void addParameterWithCallback(@NonNull String param, @NonNull ShareBottomSheetDialogInterface.OnCustomUtmSource listener) {
-        shareBottomSheetController.setListenerParam(param, listener);
-    }
-
-    /**
-     * set another `utm` parameter that u need included into your url
-     * @param value set value that u want
-     * @param param set param that u need to add into paramater
-     */
-    public void addParameter(@NonNull String param, @NonNull String value) {
-        if (!TextUtils.isEmpty(param) && !TextUtils.isEmpty(value)) {
-            try {
-                shareBottomSheetController.setParameter(param, value);
-            } catch (UnsupportedEncodingException e) {
-                e.printStackTrace();
-            }
-        }
+    public void setOnDismissListener(CustomOnDismissListener dismissListener) {
+        this.dismissListener = dismissListener;
     }
 
     public static class Builder {
@@ -159,7 +120,7 @@ public class ShareBottomSheetDialog extends BottomSheetDialogFragment {
          * that she/he need to pick
          */
         public Builder setCancelable(boolean isCancelable) {
-            this.param.isCancelable = isCancelable;
+            this.param.setCancelable(isCancelable);
             return this;
         }
 
@@ -168,7 +129,15 @@ public class ShareBottomSheetDialog extends BottomSheetDialogFragment {
          * the default is `false`
          */
         public Builder isFullScreen(boolean isFullscreen) {
-            this.param.isFullScreen = isFullscreen;
+            this.param.setFullScreen(isFullscreen);
+            return this;
+        }
+
+        /**
+         * @param dismissListener listener if you want to give callback while user dismissing bottomsheet
+         */
+        public Builder setOnDismissListener(CustomOnDismissListener dismissListener) {
+            this.param.setDismissListener(dismissListener);
             return this;
         }
 
@@ -177,7 +146,7 @@ public class ShareBottomSheetDialog extends BottomSheetDialogFragment {
          * the default is `send to`
          */
         public Builder setTitle(@NonNull String title) {
-            this.param.title = title;
+            this.param.setTitle(title);
             return this;
         }
 
@@ -186,17 +155,17 @@ public class ShareBottomSheetDialog extends BottomSheetDialogFragment {
          * don't set the message if you don't want to give string content
          */
         public Builder setMessage(@NonNull String extraString) {
-            this.param.extraString = extraString;
+            this.param.setExtraString(extraString);
             return this;
         }
 
         /**
          * set listener if you want to give callback and set your content messages
-         * @param listener that can give u callback `Resolve Info` object so you can manipulate messages
+         * @param mCustomMessageListener that can give u callback `Resolve Info` object so you can manipulate messages
          *                 depends on user selection
          */
-        public Builder setMessage(@NonNull ShareBottomSheetDialogInterface.OnCustomMessage listener) {
-            this.param.mCustomMessageListener = listener;
+        public Builder setMessage(@NonNull ShareBottomSheetDialogInterface.OnCustomMessage mCustomMessageListener) {
+            this.param.setmCustomMessageListener(mCustomMessageListener);
             return this;
         }
 
@@ -205,7 +174,7 @@ public class ShareBottomSheetDialog extends BottomSheetDialogFragment {
          * @param url can contain domain, path, and parameter that u needed
          */
         public Builder setUrl(@NonNull String url) {
-            this.param.url = url;
+            this.param.setUrl(url);
             return this;
         }
 
@@ -215,9 +184,9 @@ public class ShareBottomSheetDialog extends BottomSheetDialogFragment {
          *                 so you can manipulate utm_source depends on apps that user selected
          * if you want to constant `utm_source` just set string return type
          */
-        public Builder addParameterWithCallback(@NonNull String param, @NonNull final ShareBottomSheetDialogInterface.OnCustomUtmSource listener) {
+        public Builder addParameterWithCallback(@NonNull String param, @NonNull final ShareBottomSheetDialogInterface.OnCustomParameter listener) {
             if (!TextUtils.isEmpty(param)) {
-                this.param.listOfListener.put(param, listener);
+                this.param.setListOfListener(param, listener);
             }
             return this;
         }
@@ -229,7 +198,7 @@ public class ShareBottomSheetDialog extends BottomSheetDialogFragment {
          */
         public Builder addParameter(@NonNull String param, @NonNull String value) {
             if (!TextUtils.isEmpty(value) && !TextUtils.isEmpty(param)) {
-                this.param.anotherParam.put(param, value);
+                this.param.setAnotherParam(param, value);
             }
             return this;
         }
@@ -245,10 +214,9 @@ public class ShareBottomSheetDialog extends BottomSheetDialogFragment {
         public ShareBottomSheetDialog create() {
             final ShareBottomSheetDialog shareBottomSheetDialog = new ShareBottomSheetDialog();
             this.param.apply(shareBottomSheetDialog.shareBottomSheetController);
-            Bundle args = new Bundle();
-            args.putBoolean("fullscreen", param.isFullScreen);
-            shareBottomSheetDialog.setCancelable(param.isCancelable);
-            shareBottomSheetDialog.setArguments(args);
+            shareBottomSheetDialog.isFullScreen(param.isFullScreen());
+            shareBottomSheetDialog.setCancelable(param.isCancelable());
+            shareBottomSheetDialog.setOnDismissListener(param.getDismissListener());
             return shareBottomSheetDialog;
         }
 

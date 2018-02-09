@@ -7,7 +7,7 @@ import android.content.pm.ResolveInfo;
  */
 
 @Deprecated
-public abstract class DefaultUtmSourceCallback implements ShareBottomSheetDialogInterface.OnCustomUtmSource {
+public abstract class DefaultUtmSourceCallback implements ShareBottomSheetDialogInterface.OnCustomParameter {
 
     public String onChooseApps(ResolveInfo resolveInfo) {
         String utmSource = "";

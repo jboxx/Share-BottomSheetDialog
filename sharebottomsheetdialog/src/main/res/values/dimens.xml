@@ -10,6 +10,11 @@
     <dimen name="dp_mid">14dp</dimen>
     <dimen name="dp_large">16dp</dimen>
     <dimen name="dp_xlarge">18dp</dimen>
+    <dimen name="dp_xxlarge">20dp</dimen>
+    <dimen name="dp_xxxlarge">22dp</dimen>
+    <dimen name="dp_xxxxlarge">24dp</dimen>
+
+    <dimen name="dp_32">32dp</dimen>
 
     <dimen name="icon_size_standard">24dp</dimen>
 
