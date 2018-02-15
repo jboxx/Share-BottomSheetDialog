@@ -29,6 +29,7 @@ public class JavaActivity extends AppCompatActivity {
     private static final int KOTLIN_RC = 666;
 
     EditText edtCopy;
+    ShareBottomSheetDialog.Builder shareBottomSheetDialog;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -67,8 +68,8 @@ public class JavaActivity extends AppCompatActivity {
             public void onClick(View view) {
                 edtCopy.setText("");
                 new ShareBottomSheetDialog.Builder(getSupportFragmentManager())
-                        .setCancelable(true)
-                        .isFullScreen(true)
+                        .setCancelable(false)
+                        .setFullScreen(false)
                         .setMessage(new ShareBottomSheetDialogInterface.OnCustomMessage() {
                             @Override
                             public String onChooseApps(ResolveInfo resolveInfo) {
@@ -121,7 +122,7 @@ public class JavaActivity extends AppCompatActivity {
                                 Toast.makeText(JavaActivity.this, content, Toast.LENGTH_LONG).show();
                             }
                         })
-                        .show();
+                        .showAllowingStateLoss();
             }
         });
 
@@ -129,8 +130,8 @@ public class JavaActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 edtCopy.setText("");
-                ShareBottomSheetDialog.Builder shareBottomSheetDialog = new ShareBottomSheetDialog.Builder(getSupportFragmentManager());
-                shareBottomSheetDialog.isFullScreen(false);
+                shareBottomSheetDialog = new ShareBottomSheetDialog.Builder(getSupportFragmentManager());
+                shareBottomSheetDialog.setFullScreen(true);
                 shareBottomSheetDialog.setCancelable(false);
                 shareBottomSheetDialog.setTitle("Share");
                 shareBottomSheetDialog.setMessage(new ShareBottomSheetDialogInterface.OnCustomMessage() {
@@ -155,7 +156,9 @@ public class JavaActivity extends AppCompatActivity {
                         Toast.makeText(JavaActivity.this, content, Toast.LENGTH_LONG).show();
                     }
                 });
-                shareBottomSheetDialog.show();
+                if (!shareBottomSheetDialog.isAdded()) {
+                    shareBottomSheetDialog.show();
+                }
             }
         });
     }

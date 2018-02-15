@@ -9,6 +9,7 @@ import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.BottomSheetDialog;
 import android.support.design.widget.BottomSheetDialogFragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -49,6 +50,7 @@ public class ShareBottomSheetDialog extends BottomSheetDialogFragment {
                     final BottomSheetBehavior bottomSheetBehavior = BottomSheetBehavior.from(bottomSheetLayout);
                     if(isFullScreen) {
                         bottomSheetBehavior.setPeekHeight(bottomSheetLayout.getHeight());
+                        //bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
                     }
                 }
             }
@@ -76,20 +78,27 @@ public class ShareBottomSheetDialog extends BottomSheetDialogFragment {
      * @param isFullscreen flag that you want to make bottom sheet fullscreen or not
      * the default is `false`
      */
-    public void isFullScreen(boolean isFullscreen) {
+    private void setFullScreen(boolean isFullscreen) {
         this.isFullScreen = isFullscreen;
     }
 
     /**
      * @param dismissListener listener if you want to give callback while user dismissing bottomsheet
      */
-    public void setOnDismissListener(CustomOnDismissListener dismissListener) {
+    private void setOnDismissListener(CustomOnDismissListener dismissListener) {
         this.dismissListener = dismissListener;
+    }
+
+    private void showDialogAllowingStateLoss(FragmentManager fragmentManager, String tag) {
+        FragmentTransaction ft = fragmentManager.beginTransaction();
+        ft.add(this, tag);
+        ft.commitAllowingStateLoss();
     }
 
     public static class Builder {
 
         private static String TAG = ShareBottomSheetDialog.class.getSimpleName();
+        private ShareBottomSheetDialog shareBottomSheetDialog;
         private final ShareBottomSheetController.ShareDialogParam param;
         private final FragmentManager fragmentManager;
 
@@ -115,6 +124,13 @@ public class ShareBottomSheetDialog extends BottomSheetDialogFragment {
         }
 
         /**
+         * @return true if ShareBottomSheetDialog was shown
+         */
+        public boolean isAdded() {
+            return shareBottomSheetDialog != null && shareBottomSheetDialog.isAdded();
+        }
+
+        /**
          * @param isCancelable flag that you want to make bottom sheet cancelable or not
          * the default is `true`, set cancelable into `false` will forcing user to choose apps
          * that she/he need to pick
@@ -128,7 +144,7 @@ public class ShareBottomSheetDialog extends BottomSheetDialogFragment {
          * @param isFullscreen flag that you want to make bottom sheet fullscreen or not
          * the default is `false`
          */
-        public Builder isFullScreen(boolean isFullscreen) {
+        public Builder setFullScreen(boolean isFullscreen) {
             this.param.setFullScreen(isFullscreen);
             return this;
         }
@@ -211,10 +227,10 @@ public class ShareBottomSheetDialog extends BottomSheetDialogFragment {
          * processing is needed, {@link #show()} may be called instead to both
          * create and display the dialog.
          */
-        public ShareBottomSheetDialog create() {
-            final ShareBottomSheetDialog shareBottomSheetDialog = new ShareBottomSheetDialog();
+        private ShareBottomSheetDialog create() {
+            ShareBottomSheetDialog shareBottomSheetDialog = new ShareBottomSheetDialog();
             this.param.apply(shareBottomSheetDialog.shareBottomSheetController);
-            shareBottomSheetDialog.isFullScreen(param.isFullScreen());
+            shareBottomSheetDialog.setFullScreen(param.isFullScreen());
             shareBottomSheetDialog.setCancelable(param.isCancelable());
             shareBottomSheetDialog.setOnDismissListener(param.getDismissListener());
             return shareBottomSheetDialog;
@@ -231,11 +247,21 @@ public class ShareBottomSheetDialog extends BottomSheetDialogFragment {
          * </pre>
          */
         public ShareBottomSheetDialog show() {
-            final ShareBottomSheetDialog shareBottomSheetDialog = create();
-            shareBottomSheetDialog.show(fragmentManager, TAG);
+            if (!this.isAdded()) {
+            shareBottomSheetDialog = create();
+                fragmentManager.executePendingTransactions();
+                shareBottomSheetDialog.show(fragmentManager, TAG);
+            }
             return shareBottomSheetDialog;
         }
 
+        public ShareBottomSheetDialog showAllowingStateLoss() {
+            if (!this.isAdded()) {
+            shareBottomSheetDialog = create();
+                shareBottomSheetDialog.showDialogAllowingStateLoss(fragmentManager, TAG);
+            }
+            return shareBottomSheetDialog;
+        }
     }
 
 }

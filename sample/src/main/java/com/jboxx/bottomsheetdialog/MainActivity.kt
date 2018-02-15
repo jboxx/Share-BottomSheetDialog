@@ -52,6 +52,7 @@ class MainActivity : AppCompatActivity() {
         shareButton1.setOnClickListener {
             edtCopy.setText("")
             ShareBottomSheetDialog.Builder(supportFragmentManager)
+                    .setFullScreen(true)
                     .setCancelable(true)
                     .setUrl("https://www.youtube.com/watch?v=QBGaO89cBMI&")
                     .addParameterWithCallback(UTMConstants.UTM_SOURCE, ShareBottomSheetDialogInterface.OnCustomParameter { resolveInfo -> "everywhere" })

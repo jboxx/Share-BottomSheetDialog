@@ -35,7 +35,7 @@ configure(allprojects) {
         androidTargetSdkVersion             = 26
         androidCompileSdkVersion            = 26
         androidBuildToolsVersion            = '26.0.2'
-        androidSupportLibraryVersion        = '26.1.0'
+        androidSupportLibraryVersion        = '27.0.1'
 
         junitVersion                        = '4.12'
 

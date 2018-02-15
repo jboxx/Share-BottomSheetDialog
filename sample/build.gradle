@@ -30,6 +30,7 @@ dependencies {
 
     implementation "com.android.support:appcompat-v7:$androidSupportLibraryVersion"
     implementation "com.android.support:design:$androidSupportLibraryVersion"
+    compile 'com.avast:android-styled-dialogs:2.3.3'
 
     testImplementation "junit:junit:$junitVersion"
     androidTestImplementation "com.android.support.test:runner:$supportTestVersion"
