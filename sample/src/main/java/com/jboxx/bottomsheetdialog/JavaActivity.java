@@ -10,6 +10,7 @@ import android.content.pm.ResolveInfo;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -82,6 +83,7 @@ public class JavaActivity extends AppCompatActivity {
                         .addParameterWithCallback(UTMConstants.UTM_SOURCE, new ShareBottomSheetDialogInterface.OnCustomParameter() {
                             @Override
                             public String onChooseApps(ResolveInfo resolveInfo) {
+                                Log.d(JavaActivity.class.getSimpleName(), "packageName " + resolveInfo.activityInfo.packageName + " name " + resolveInfo.activityInfo.name);
                                 String utmSource = "";
                                 if (resolveInfo.activityInfo.packageName.contains("com.whatsapp")) {
                                     utmSource = "from whatsapp";
@@ -134,9 +136,11 @@ public class JavaActivity extends AppCompatActivity {
                 shareBottomSheetDialog.setFullScreen(true);
                 shareBottomSheetDialog.setCancelable(false);
                 shareBottomSheetDialog.setTitle("Share");
+                shareBottomSheetDialog.setExtraSubject("This is subject");
                 shareBottomSheetDialog.setMessage(new ShareBottomSheetDialogInterface.OnCustomMessage() {
                     @Override
                     public String onChooseApps(ResolveInfo resolveInfo) {
+                        Log.d(JavaActivity.class.getSimpleName(), "packageName " + resolveInfo.activityInfo.packageName + " name " + resolveInfo.activityInfo.name);
                         String message = "Share this link!";
                         if (resolveInfo.activityInfo.packageName.contains("com.whatsapp")) {
                             message = "Share this link via whatsapp!";
@@ -158,6 +162,7 @@ public class JavaActivity extends AppCompatActivity {
                 });
                 if (!shareBottomSheetDialog.isAdded()) {
                     shareBottomSheetDialog.show();
+                    Log.d(JavaActivity.class.getSimpleName(), "" + shareBottomSheetDialog.isAdded());
                 }
             }
         });

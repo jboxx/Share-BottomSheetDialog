@@ -50,7 +50,6 @@ public class ShareBottomSheetDialog extends BottomSheetDialogFragment {
                     final BottomSheetBehavior bottomSheetBehavior = BottomSheetBehavior.from(bottomSheetLayout);
                     if(isFullScreen) {
                         bottomSheetBehavior.setPeekHeight(bottomSheetLayout.getHeight());
-                        //bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
                     }
                 }
             }
@@ -167,6 +166,25 @@ public class ShareBottomSheetDialog extends BottomSheetDialogFragment {
         }
 
         /**
+         * @param extraSubject fill subject if you want to give subject into subject of messages
+         * don't set the subject if you don't want to give subject to your messages
+         */
+        public Builder setExtraSubject(@NonNull String extraSubject) {
+            this.param.setExtraSubject(extraSubject);
+            return this;
+        }
+
+        /**
+         * set listener if you want to give callback and set your content messages
+         * @param mCustomExtraSubjectListener that can give u callback `Resolve Info` object so you can manipulate subject
+         *                 depends on user selection
+         */
+        public Builder setExtraSubject(@NonNull ShareBottomSheetDialogInterface.OnCustomMessage mCustomExtraSubjectListener) {
+            this.param.setmCustomExtraTitleListener(mCustomExtraSubjectListener);
+            return this;
+        }
+
+        /**
          * @param extraString fill message if you want to give messages into content
          * don't set the message if you don't want to give string content
          */
@@ -248,7 +266,7 @@ public class ShareBottomSheetDialog extends BottomSheetDialogFragment {
          */
         public ShareBottomSheetDialog show() {
             if (!this.isAdded()) {
-            shareBottomSheetDialog = create();
+                shareBottomSheetDialog = create();
                 fragmentManager.executePendingTransactions();
                 shareBottomSheetDialog.show(fragmentManager, TAG);
             }
@@ -257,7 +275,7 @@ public class ShareBottomSheetDialog extends BottomSheetDialogFragment {
 
         public ShareBottomSheetDialog showAllowingStateLoss() {
             if (!this.isAdded()) {
-            shareBottomSheetDialog = create();
+                shareBottomSheetDialog = create();
                 shareBottomSheetDialog.showDialogAllowingStateLoss(fragmentManager, TAG);
             }
             return shareBottomSheetDialog;

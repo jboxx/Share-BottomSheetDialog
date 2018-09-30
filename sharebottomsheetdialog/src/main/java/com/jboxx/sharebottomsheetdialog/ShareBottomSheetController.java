@@ -11,6 +11,7 @@ import android.os.Build;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
@@ -35,9 +36,11 @@ class ShareBottomSheetController {
     private StringBuilder populateParam = new StringBuilder();
     private StringBuilder message = new StringBuilder();
     private String extraString;
+    private String extraSubject;
     private String url;
     private LinkedHashMap<String, ShareBottomSheetDialogInterface.OnCustomParameter> listOfListener = new LinkedHashMap<>();
     private ShareBottomSheetDialogInterface.OnCustomMessage customMessageCallback;
+    private ShareBottomSheetDialogInterface.OnCustomMessage customExtraSubjectCallback;
     private CustomOnDismissListener dismissListener;
 
     protected ShareBottomSheetController() {}
@@ -69,8 +72,13 @@ class ShareBottomSheetController {
                             }
                         }
                         if (customMessageCallback != null) {
-                            if(!TextUtils.isEmpty(customMessageCallback.onChooseApps(resolveInfo))){
+                            if (!TextUtils.isEmpty(customMessageCallback.onChooseApps(resolveInfo))) {
                                 setMessage(customMessageCallback.onChooseApps(resolveInfo));
+                            }
+                        }
+                        if (customExtraSubjectCallback != null) {
+                            if (!TextUtils.isEmpty(customExtraSubjectCallback.onChooseApps(resolveInfo))) {
+                                setExtraSubject(customExtraSubjectCallback.onChooseApps(resolveInfo));
                             }
                         }
                         doShare(resolveInfo, populateMessage().toString());
@@ -108,6 +116,18 @@ class ShareBottomSheetController {
 
     private void setListOfListener(LinkedHashMap<String, ShareBottomSheetDialogInterface.OnCustomParameter> listOfListener) {
         this.listOfListener = listOfListener;
+    }
+
+    private void setExtraSubject(String extraSubject) {
+        if (!TextUtils.isEmpty(extraSubject)) {
+            this.extraSubject = extraSubject;
+        }
+    }
+
+    private void setExtraSubject(ShareBottomSheetDialogInterface.OnCustomMessage listenerCustomExtraSubject) {
+        if (listenerCustomExtraSubject != null) {
+            this.customExtraSubjectCallback = listenerCustomExtraSubject;
+        }
     }
 
     private void setMessage(String extraString) {
@@ -151,6 +171,9 @@ class ShareBottomSheetController {
     private void doShare(ResolveInfo resolveInfo, String message) {
         Intent sendIntent = new Intent();
         sendIntent.setAction(Intent.ACTION_SEND);
+        if (!TextUtils.isEmpty(extraSubject)) {
+            sendIntent.putExtra(Intent.EXTRA_SUBJECT, extraSubject);
+        }
         sendIntent.putExtra(Intent.EXTRA_TEXT, message);
 
         if (resolveInfo != null) {
@@ -201,9 +224,11 @@ class ShareBottomSheetController {
 
         private String title;
         private ShareBottomSheetDialogInterface.OnCustomMessage mCustomMessageListener;
+        private ShareBottomSheetDialogInterface.OnCustomMessage mCustomExtraSubjectListener;
         private LinkedHashMap<String, ShareBottomSheetDialogInterface.OnCustomParameter> listOfListener = new LinkedHashMap<>();
 
         private String extraString;
+        private String extraSubject;
         private String url;
         private HashMap<String, String> anotherParam = new LinkedHashMap<>();
 
@@ -212,6 +237,14 @@ class ShareBottomSheetController {
         protected void apply(ShareBottomSheetController dialog) {
             if(!TextUtils.isEmpty(title)) {
                 dialog.setTitle(title);
+            }
+
+            if (!TextUtils.isEmpty(extraSubject)) {
+                dialog.setExtraSubject(extraSubject);
+            }
+
+            if (mCustomExtraSubjectListener != null) {
+                dialog.setExtraSubject(mCustomExtraSubjectListener);
             }
 
             if(!TextUtils.isEmpty(extraString)) {
@@ -279,12 +312,20 @@ class ShareBottomSheetController {
             this.title = title;
         }
 
+        protected void setmCustomExtraTitleListener(ShareBottomSheetDialogInterface.OnCustomMessage mCustomExtraSubjectListener) {
+            this.mCustomExtraSubjectListener = mCustomExtraSubjectListener;
+        }
+
         protected void setmCustomMessageListener(ShareBottomSheetDialogInterface.OnCustomMessage mCustomMessageListener) {
             this.mCustomMessageListener = mCustomMessageListener;
         }
 
         protected void setListOfListener(String param, ShareBottomSheetDialogInterface.OnCustomParameter listener) {
             this.listOfListener.put(param, listener);
+        }
+
+        protected void setExtraSubject(String extraSubject) {
+            this.extraSubject = extraSubject;
         }
 
         protected void setExtraString(String extraString) {

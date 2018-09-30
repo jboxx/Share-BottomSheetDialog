@@ -12,7 +12,7 @@ import com.jboxx.sharebottomsheetdialog.ShareBottomSheetDialogInterface
 import com.jboxx.sharebottomsheetdialog.UTMConstants
 import android.app.Activity
 import android.content.Intent
-
+import android.content.pm.ResolveInfo
 
 
 /**
@@ -55,6 +55,17 @@ class MainActivity : AppCompatActivity() {
                     .setFullScreen(true)
                     .setCancelable(true)
                     .setUrl("https://www.youtube.com/watch?v=QBGaO89cBMI&")
+                    .setExtraSubject({resolveInfo: ResolveInfo -> String
+                        var extraSubject = "Subject for All"
+                        if (resolveInfo.activityInfo.packageName.contains("android.gm")) {
+                            extraSubject = "Subject for Gmail";
+                        } else if (resolveInfo.activityInfo.packageName.contains("android.email")) {
+                            extraSubject = "Subject for Android mail";
+                        } else if (resolveInfo.activityInfo.packageName.contains("android.apps.inbox")) {
+                            extraSubject = "Subject for Inbox by Gmail";
+                        }
+                        return@setExtraSubject extraSubject
+                    })
                     .addParameterWithCallback(UTMConstants.UTM_SOURCE, ShareBottomSheetDialogInterface.OnCustomParameter { resolveInfo -> "everywhere" })
                     .show()
         }
