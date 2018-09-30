@@ -50,7 +50,8 @@ The minimum API level supported by this library is API 15.
                     Log.d(JavaActivity.class.getSimpleName(), "" + shareBottomSheetDialog.isAdded());
                 }
                 
-                
+## Or
+
                 new ShareBottomSheetDialog.Builder(getSupportFragmentManager())
                         .setCancelable(false)
                         .setFullScreen(false)
