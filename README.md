@@ -50,6 +50,56 @@ The minimum API level supported by this library is API 15.
                     Log.d(JavaActivity.class.getSimpleName(), "" + shareBottomSheetDialog.isAdded());
                 }
                 
+                
+                new ShareBottomSheetDialog.Builder(getSupportFragmentManager())
+                        .setCancelable(false)
+                        .setFullScreen(false)
+                        .setMessage(new ShareBottomSheetDialogInterface.OnCustomMessage() {
+                            @Override
+                            public String onChooseApps(ResolveInfo resolveInfo) {
+                                return "Share this link!";
+                            }
+                        })
+                        .setUrl("https://www.youtube.com/watch?v=2ThFJODUZ_4")
+                        .addParameter(UTMConstants.UTM_TERM, "A.O.V")
+                        .addParameter(UTMConstants.UTM_CAMPAIGN, "video-miwon")
+                        .addParameterWithCallback(UTMConstants.UTM_SOURCE, new ShareBottomSheetDialogInterface.OnCustomParameter() {
+                            @Override
+                            public String onChooseApps(ResolveInfo resolveInfo) {
+                                Log.d(JavaActivity.class.getSimpleName(), "packageName " + resolveInfo.activityInfo.packageName + " name " + resolveInfo.activityInfo.name);
+                                String utmSource = "";
+                                if (resolveInfo.activityInfo.packageName.contains("com.whatsapp")) {
+                                    utmSource = "from whatsapp";
+                                } else if (resolveInfo.activityInfo.packageName.contains("com.facebook") && resolveInfo.activityInfo.name.contains("com.facebook.composer.shareintent")) {
+                                    utmSource = "from facebook";
+                                } else if (resolveInfo.activityInfo.packageName.contains("com.facebook") && resolveInfo.activityInfo.name.contains("com.facebook.messenger.intents")) {
+                                    utmSource = "from facebook messenger";
+                                } else if (resolveInfo.activityInfo.name.contains("com.google.android.apps.docs.drive.clipboard.SendTextToClipboardActivity")) {
+                                    utmSource = "from copy link";
+                                } else if (resolveInfo.activityInfo.packageName.contains("jp.naver.line") || resolveInfo.activityInfo.name.contains("jp.naver.line")){
+                                    utmSource = "from line";
+                                } else if (resolveInfo.activityInfo.packageName.contains("com.twitter")) {
+                                    utmSource = "from twitter";
+                                } else if (resolveInfo.activityInfo.packageName.contains("org.telegram")) {
+                                    utmSource = "from telegram";
+                                } 
+                                return utmSource;
+                            }
+                        })
+                        .addParameterWithCallback(UTMConstants.UTM_CONTENT, new ShareBottomSheetDialogInterface.OnCustomParameter() {
+                            @Override
+                            public String onChooseApps(ResolveInfo resolveInfo) {
+                                return "video";
+                            }
+                        })
+                        .setOnDismissListener(new CustomOnDismissListener() {
+                            @Override
+                            public void onDismiss(DialogInterface dialog, String content) {
+                                super.onDismiss(dialog, content);
+                                Toast.makeText(JavaActivity.this, content, Toast.LENGTH_LONG).show();
+                            }
+                        })
+                        .showAllowingStateLoss();
 ### Kotlin
     ShareBottomSheetDialog.Builder(supportFragmentManager)
                     .setFullScreen(true)
