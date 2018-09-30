@@ -170,7 +170,7 @@ class ShareBottomSheetController {
         if (!excludePackageNames.isEmpty()) {
             if (!mAllShareApps.isEmpty()) {
                 for (ResolveInfo resolveInfo : mAllShareApps) {
-                    if (excludePackageNames.contains(resolveInfo.activityInfo.packageName)) {
+                    if (!excludePackageNames.contains(resolveInfo.activityInfo.packageName)) {
                         targetedShareIntents.add(resolveInfo);
                     }
                 }
