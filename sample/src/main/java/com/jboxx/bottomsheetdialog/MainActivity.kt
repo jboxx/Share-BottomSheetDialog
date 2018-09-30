@@ -74,6 +74,7 @@ class MainActivity : AppCompatActivity() {
             edtCopy.setText("")
             val shareBottomSheet = ShareBottomSheetDialog.Builder(supportFragmentManager)
             shareBottomSheet.setUrl("https://code.tutsplus.com/articles/coding-functional-android-apps-in-kotlin-lambdas-null-safety-more--cms-27964")
+            shareBottomSheet.excludePackageNames("com.google.android.gm", "com.facebook")
             shareBottomSheet.addParameter(UTMConstants.UTM_CONTENT,"carousel")
             shareBottomSheet.show()
         }

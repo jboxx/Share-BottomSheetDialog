@@ -11,12 +11,12 @@ import android.os.Build;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -39,6 +39,7 @@ class ShareBottomSheetController {
     private String extraSubject;
     private String url;
     private LinkedHashMap<String, ShareBottomSheetDialogInterface.OnCustomParameter> listOfListener = new LinkedHashMap<>();
+    private List<String> excludePackageNames = new ArrayList<>();
     private ShareBottomSheetDialogInterface.OnCustomMessage customMessageCallback;
     private ShareBottomSheetDialogInterface.OnCustomMessage customExtraSubjectCallback;
     private CustomOnDismissListener dismissListener;
@@ -114,6 +115,10 @@ class ShareBottomSheetController {
         this.dismissListener = dismissListener;
     }
 
+    private void setExcludePackageNames(List<String> excludePackageNames) {
+        this.excludePackageNames = excludePackageNames;
+    }
+
     private void setListOfListener(LinkedHashMap<String, ShareBottomSheetDialogInterface.OnCustomParameter> listOfListener) {
         this.listOfListener = listOfListener;
     }
@@ -155,13 +160,26 @@ class ShareBottomSheetController {
     }
 
     private List<ResolveInfo> showAllShareApp() {
-        java.util.List<ResolveInfo> mApps;
+        List<ResolveInfo> mAllShareApps;
+        List<ResolveInfo> targetedShareIntents = new ArrayList<>();
         Intent intent = new Intent(Intent.ACTION_SEND, null);
         intent.setType("text/plain");
         PackageManager pManager = mContext.getPackageManager();
-        mApps = pManager.queryIntentActivities(intent,
+        mAllShareApps = pManager.queryIntentActivities(intent,
                 PackageManager.GET_SHARED_LIBRARY_FILES);
-        return mApps;
+        if (!excludePackageNames.isEmpty()) {
+            if (!mAllShareApps.isEmpty()) {
+                for (ResolveInfo resolveInfo : mAllShareApps) {
+                    if (excludePackageNames.contains(resolveInfo.activityInfo.packageName)) {
+                        targetedShareIntents.add(resolveInfo);
+                    }
+                }
+            }
+        } else {
+            targetedShareIntents.addAll(mAllShareApps);
+        }
+
+        return targetedShareIntents;
     }
 
     private float dpFromPx(float px) {
@@ -226,6 +244,7 @@ class ShareBottomSheetController {
         private ShareBottomSheetDialogInterface.OnCustomMessage mCustomMessageListener;
         private ShareBottomSheetDialogInterface.OnCustomMessage mCustomExtraSubjectListener;
         private LinkedHashMap<String, ShareBottomSheetDialogInterface.OnCustomParameter> listOfListener = new LinkedHashMap<>();
+        private List<String> excludePackageNames = new ArrayList<>();
 
         private String extraString;
         private String extraSubject;
@@ -237,6 +256,10 @@ class ShareBottomSheetController {
         protected void apply(ShareBottomSheetController dialog) {
             if(!TextUtils.isEmpty(title)) {
                 dialog.setTitle(title);
+            }
+
+            if (!excludePackageNames.isEmpty()) {
+                dialog.setExcludePackageNames(excludePackageNames);
             }
 
             if (!TextUtils.isEmpty(extraSubject)) {
@@ -338,6 +361,10 @@ class ShareBottomSheetController {
 
         protected void setAnotherParam(String param, String value) {
             this.anotherParam.put(param, value);
+        }
+
+        protected void setExcludePackageNames(List<String> excludePackageNames) {
+            this.excludePackageNames = excludePackageNames;
         }
     }
 }

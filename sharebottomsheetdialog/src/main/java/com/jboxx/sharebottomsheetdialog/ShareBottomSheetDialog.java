@@ -16,6 +16,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
+import java.util.Arrays;
+import java.util.List;
+
 /**
  * Created by Rifqi @jboxxpradhana
  */
@@ -234,6 +237,15 @@ public class ShareBottomSheetDialog extends BottomSheetDialogFragment {
             if (!TextUtils.isEmpty(value) && !TextUtils.isEmpty(param)) {
                 this.param.setAnotherParam(param, value);
             }
+            return this;
+        }
+
+        /**
+         * fill package names which you wants to exclude in your share intent
+         * @param excludePackageNames can contain array of String package name
+         */
+        public Builder excludePackageNames(String... excludePackageNames) {
+            this.param.setExcludePackageNames(Arrays.asList(excludePackageNames));
             return this;
         }
 
