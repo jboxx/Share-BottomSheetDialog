@@ -1,25 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_marginLeft="@dimen/fragment_share_side_margin"
+    android:layout_marginRight="@dimen/fragment_share_side_margin"
+    android:orientation="vertical">
 
     <TextView
         android:id="@+id/tv_share_title"
-        android:text="@string/send_to"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@android:color/white"
+        android:ellipsize="end"
         android:maxLines="1"
         android:minLines="1"
-        android:ellipsize="end"
-        android:background="@android:color/white"
         android:padding="@dimen/dp_large"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:text="@string/send_to" />
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/rv_share_apps"
-        android:paddingLeft="@dimen/dp_large"
-        android:paddingRight="@dimen/dp_large"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent"
+        android:paddingLeft="@dimen/dp_large"
+        android:paddingRight="@dimen/dp_large" />
 
 </LinearLayout>
