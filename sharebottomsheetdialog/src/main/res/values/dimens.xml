@@ -20,4 +20,6 @@
 
     <dimen name="sp_xsmall">12sp</dimen>
 
+    <dimen name="fragment_share_side_margin">0dp</dimen>
+
 </resources>
